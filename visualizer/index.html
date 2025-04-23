@@ -5,31 +5,52 @@
   <title>IMPO Visualizador Cuántico — Divisores Gaussianos</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r148/three.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.148.0/examples/js/controls/OrbitControls.min.js"></script>
+  <script type="text/javascript" async
+    src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+  </script>
   <style>
-    body { margin: 0; overflow: hidden; font-family: sans-serif; background-color: #000; }
+    body { margin: 0; overflow: hidden; font-family: 'Segoe UI', sans-serif; background-color: #0b0b0c; color: #fff; }
     canvas { display: block; }
     #gui {
       position: absolute;
-      top: 10px;
-      left: 10px;
+      top: 20px;
+      left: 20px;
       z-index: 10;
-      background: rgba(0,0,0,0.6);
+      background: #121417f2;
       color: white;
-      padding: 15px;
-      border-radius: 10px;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 0 15px rgba(0,255,255,0.2);
+      max-width: 300px;
+    }
+    input, select, button {
+      width: 100%;
+      margin-top: 8px;
+      margin-bottom: 15px;
+      padding: 8px;
+      border-radius: 6px;
+      border: none;
+      font-size: 15px;
+    }
+    button {
+      background: #00d0ff;
+      color: #000;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    button:hover {
+      background: #00a6cc;
     }
     #info {
       position: absolute;
       bottom: 10px;
-      left: 10px;
-      width: 360px;
+      left: 20px;
       font-size: 14px;
-      color: #ccc;
       background: rgba(0,0,0,0.75);
-      padding: 10px;
-      line-height: 1.4;
-      border-left: 3px solid cyan;
-      border-radius: 4px;
+      padding: 15px;
+      border-left: 4px solid #00ffff;
+      border-radius: 6px;
+      max-width: 360px;
     }
   </style>
 </head>
@@ -37,26 +58,27 @@
 <div id="gui">
   <label><strong>Modo:</strong></label>
   <select id="mode">
-    <option value="gaussian">Divisores en ℤ[i] (por norma)</option>
-    <option value="integer">Divisores reales de N</option>
-  </select><br><br>
+    <option value="gaussian">Divisores en \( \mathbb{Z}[i] \)</option>
+    <option value="integer">Divisores reales de \( N \)</option>
+  </select>
 
-  <label for="norma">Norma máxima (modo ℤ[i]):</label><br>
-  <input type="number" id="norma" value="100" min="10" max="500"><br><br>
+  <label for="norma">Norma máxima (modo \( \mathbb{Z}[i] \)):</label>
+  <input type="number" id="norma" value="100" min="10" max="500">
 
-  <label for="numero">Número entero (modo ℤ):</label><br>
-  <input type="number" id="numero" value="945" min="1"><br><br>
+  <label for="numero">Número entero (modo \( \mathbb{Z} \)):</label>
+  <input type="number" id="numero" value="945" min="1">
 
   <button onclick="generar()">Generar</button>
   <button onclick="limpiar()">Limpiar</button>
 </div>
 
 <div id="info">
-  <strong>IMPO Visualizador Cuántico</strong><br>
-  Este visualizador permite explorar los divisores gaussianos \( z = a + bi \) con norma \( a^2 + b^2 \leq N \),<br>
-  o visualizar divisores reales de un entero clásico \( N \) y proyectarlos en el eje complejo.<br><br>
-  Basado en el teorema demostrado en este proyecto:<br>
-  <em>No existen números perfectos impares.</em>
+  <strong>🧠 IMPO Visualizador Cuántico</strong><br>
+  Este visualizador permite explorar:<br>
+  • Divisores gaussianos \( z = a + bi \in \mathbb{Z}[i] \), con \( a^2 + b^2 \leq N \)<br>
+  • Divisores reales de un entero \( N \in \mathbb{Z} \), proyectados sobre el eje complejo<br><br>
+  <em>Basado en el teorema demostrado en este proyecto:</em><br>
+  <strong><span style="color:#00ffff;">No existen números perfectos impares.</span></strong>
 </div>
 
 <script>
