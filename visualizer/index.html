@@ -2,41 +2,67 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>ℤ[i] Gaussian Integer Visualizer</title>
+  <title>Visualizador IMPO - Divisores Gaussianos</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <style>
-    body { margin: 0; overflow: hidden; background-color: black; }
+    body { margin: 0; overflow: hidden; background: #000; }
     canvas { display: block; }
+    #info {
+      position: absolute;
+      top: 10px; left: 10px;
+      color: white;
+      font-family: monospace;
+      background: rgba(0,0,0,0.5);
+      padding: 10px;
+      z-index: 1;
+    }
   </style>
 </head>
 <body>
-<script src="https://cdn.jsdelivr.net/npm/three@0.148.0/build/three.min.js"></script>
+<div id="info">
+  <h2>IMPO Visualizador Cuántico</h2>
+  <p>Divisores de z = a + bi en <strong>ℤ[i]</strong> con norma ≤ 100</p>
+</div>
 <script>
   const scene = new THREE.Scene();
-  scene.background = new THREE.Color(0x000000);
   const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
   const renderer = new THREE.WebGLRenderer();
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(renderer.domElement);
 
-  const geometry = new THREE.SphereGeometry(0.05, 6, 6);
-  const material = new THREE.MeshBasicMaterial({color: 0x00ffff});
+  const axesHelper = new THREE.AxesHelper(5);
+  scene.add(axesHelper);
 
-  // Visualizar puntos z = a + bi en [-10, 10]^2
-  for (let a = -10; a <= 10; a++) {
-    for (let b = -10; b <= 10; b++) {
+  function norma(a, b) {
+    return a*a + b*b;
+  }
+
+  function createPoint(a, b) {
+    const geometry = new THREE.SphereGeometry(0.1, 16, 16);
+    const material = new THREE.MeshBasicMaterial({ color: 0x00ffff });
+    const point = new THREE.Mesh(geometry, material);
+    point.position.set(a, 0, b);
+    scene.add(point);
+  }
+
+  const LIM = 10;
+  for (let a = -LIM; a <= LIM; a++) {
+    for (let b = -LIM; b <= LIM; b++) {
       if (a === 0 && b === 0) continue;
-      const z = new THREE.Mesh(geometry, material);
-      z.position.set(a / 2, 0, b / 2);
-      scene.add(z);
+      const n = norma(a, b);
+      if (n <= 100) {
+        createPoint(a, b);
+      }
     }
   }
 
-  camera.position.z = 6;
-  const animate = function () {
+  camera.position.z = 25;
+
+  function animate() {
     requestAnimationFrame(animate);
     scene.rotation.y += 0.002;
     renderer.render(scene, camera);
-  };
+  }
   animate();
 </script>
 </body>
