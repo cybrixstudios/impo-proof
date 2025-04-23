@@ -2,68 +2,130 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Visualizador IMPO - Divisores Gaussianos</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <title>IMPO Visualizador Cuántico — Divisores Gaussianos</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r148/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.148.0/examples/js/controls/OrbitControls.min.js"></script>
   <style>
-    body { margin: 0; overflow: hidden; background: #000; }
+    body { margin: 0; overflow: hidden; font-family: sans-serif; background-color: #000; }
     canvas { display: block; }
+    #gui {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      z-index: 10;
+      background: rgba(0,0,0,0.6);
+      color: white;
+      padding: 15px;
+      border-radius: 10px;
+    }
     #info {
       position: absolute;
-      top: 10px; left: 10px;
-      color: white;
-      font-family: monospace;
-      background: rgba(0,0,0,0.5);
+      bottom: 10px;
+      left: 10px;
+      width: 360px;
+      font-size: 14px;
+      color: #ccc;
+      background: rgba(0,0,0,0.75);
       padding: 10px;
-      z-index: 1;
+      line-height: 1.4;
+      border-left: 3px solid cyan;
+      border-radius: 4px;
     }
   </style>
 </head>
 <body>
-<div id="info">
-  <h2>IMPO Visualizador Cuántico</h2>
-  <p>Divisores de z = a + bi en <strong>ℤ[i]</strong> con norma ≤ 100</p>
+<div id="gui">
+  <label><strong>Modo:</strong></label>
+  <select id="mode">
+    <option value="gaussian">Divisores en ℤ[i] (por norma)</option>
+    <option value="integer">Divisores reales de N</option>
+  </select><br><br>
+
+  <label for="norma">Norma máxima (modo ℤ[i]):</label><br>
+  <input type="number" id="norma" value="100" min="10" max="500"><br><br>
+
+  <label for="numero">Número entero (modo ℤ):</label><br>
+  <input type="number" id="numero" value="945" min="1"><br><br>
+
+  <button onclick="generar()">Generar</button>
+  <button onclick="limpiar()">Limpiar</button>
 </div>
+
+<div id="info">
+  <strong>IMPO Visualizador Cuántico</strong><br>
+  Este visualizador permite explorar los divisores gaussianos \( z = a + bi \) con norma \( a^2 + b^2 \leq N \),<br>
+  o visualizar divisores reales de un entero clásico \( N \) y proyectarlos en el eje complejo.<br><br>
+  Basado en el teorema demostrado en este proyecto:<br>
+  <em>No existen números perfectos impares.</em>
+</div>
+
 <script>
-  const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
-  const renderer = new THREE.WebGLRenderer();
+let scene, camera, renderer, controls;
+init();
+
+function init() {
+  scene = new THREE.Scene();
+  scene.background = new THREE.Color(0x000000);
+  camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+  camera.position.set(0, 15, 25);
+  renderer = new THREE.WebGLRenderer();
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(renderer.domElement);
 
-  const axesHelper = new THREE.AxesHelper(5);
-  scene.add(axesHelper);
+  controls = new THREE.OrbitControls(camera, renderer.domElement);
+  scene.add(new THREE.AxesHelper(10));
+  animate();
+}
 
-  function norma(a, b) {
-    return a*a + b*b;
-  }
+function animate() {
+  requestAnimationFrame(animate);
+  controls.update();
+  renderer.render(scene, camera);
+}
 
-  function createPoint(a, b) {
-    const geometry = new THREE.SphereGeometry(0.1, 16, 16);
-    const material = new THREE.MeshBasicMaterial({ color: 0x00ffff });
-    const point = new THREE.Mesh(geometry, material);
-    point.position.set(a, 0, b);
-    scene.add(point);
-  }
+function crearPunto(x, z, color=0x00ffff) {
+  const geometry = new THREE.SphereGeometry(0.2, 12, 12);
+  const material = new THREE.MeshBasicMaterial({ color });
+  const sphere = new THREE.Mesh(geometry, material);
+  sphere.position.set(x, 0, z);
+  scene.add(sphere);
+}
 
-  const LIM = 10;
-  for (let a = -LIM; a <= LIM; a++) {
-    for (let b = -LIM; b <= LIM; b++) {
-      if (a === 0 && b === 0) continue;
-      const n = norma(a, b);
-      if (n <= 100) {
-        createPoint(a, b);
+function generar() {
+  const modo = document.getElementById('mode').value;
+  limpiar();
+  if (modo === "gaussian") {
+    const maxNorma = parseInt(document.getElementById('norma').value);
+    for (let a = -20; a <= 20; a++) {
+      for (let b = -20; b <= 20; b++) {
+        const norm = a*a + b*b;
+        if (norm > 0 && norm <= maxNorma) {
+          crearPunto(a, b, 0x00ffff);
+        }
+      }
+    }
+  } else {
+    const n = parseInt(document.getElementById('numero').value);
+    for (let d = 1; d <= n; d++) {
+      if (n % d === 0) {
+        crearPunto(d/10, 0, 0xff8800);
+        crearPunto(-d/10, 0, 0xff8800);
+        crearPunto(0, d/10, 0xff0000);
+        crearPunto(0, -d/10, 0xff0000);
       }
     }
   }
+}
 
-  camera.position.z = 25;
-
-  function animate() {
-    requestAnimationFrame(animate);
-    scene.rotation.y += 0.002;
-    renderer.render(scene, camera);
-  }
-  animate();
+function limpiar() {
+  const toRemove = [];
+  scene.traverse(obj => {
+    if (obj.type === "Mesh" && obj.geometry.type === "SphereGeometry") {
+      toRemove.push(obj);
+    }
+  });
+  toRemove.forEach(obj => scene.remove(obj));
+}
 </script>
 </body>
 </html>
