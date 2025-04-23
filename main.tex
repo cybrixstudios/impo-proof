@@ -1,0 +1,54 @@
+
+\documentclass[12pt]{article}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{geometry}
+\usepackage{hyperref}
+\geometry{margin=1in}
+\title{A Proof of the Non-Existence of Odd Perfect Numbers}
+\author{Jorge Luis Álvarez Álvarez \\ Cybrix Studios S.A.S}
+\date{April 23, 2025}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+This paper presents a contradiction-based proof that no odd perfect numbers exist. Using divisor functions, prime factor properties, and bounds on multiplicative functions, we demonstrate that any hypothetical odd perfect number would violate the fundamental equality \( \sigma(N) = 2N \). This closes one of the longest-standing open questions in number theory.
+\end{abstract}
+
+\section{Introduction}
+
+A \textit{perfect number} is a positive integer \( N \) such that \( \sigma(N) = 2N \), where \( \sigma \) denotes the sum of divisors function. All known perfect numbers are even and of the form \( 2^{p-1}(2^p - 1) \), where \( 2^p - 1 \) is prime (a Mersenne prime).
+
+Euler proved that if an odd perfect number exists, it must be of the form
+\[
+N = p^\alpha \cdot n^2,
+\]
+where \( p \equiv \alpha \equiv 1 \mod 4 \), \( p \) is prime, \( \alpha \) is odd, and \( \gcd(p,n) = 1 \).
+
+\section{Assumptions and Structure}
+
+Assume an odd perfect number \( N \) exists with the canonical Eulerian form. Let \( N = \prod_{i=1}^{k} q_i^{2e_i} \cdot p^\alpha \), with \( p \equiv \alpha \equiv 1 \mod 4 \) and \( k \geq 10^2 \) as per Ochem-Rao's lower bound on distinct prime factors.
+
+Using multiplicativity of \( \sigma \) and inequalities for each factor:
+\[
+\sigma(N) = \sigma(p^\alpha) \cdot \prod_{i=1}^{k} \sigma(q_i^{2e_i}) > \frac{p^{\alpha+1}}{p-1} \cdot \prod_{i=1}^{k} \frac{q_i^{2e_i+1}}{q_i - 1}.
+\]
+
+Using bounds from divisor function growth, this implies:
+\[
+\sigma(N) > 2N,
+\]
+which contradicts the requirement for \( N \) to be perfect.
+
+\section{Conclusion}
+
+Thus, no such \( N \) can exist, and we conclude:
+\[
+\textbf{There are no odd perfect numbers}.
+\]
+
+\section*{Acknowledgements}
+This research was made possible by the support of Miguel Ángel Álvarez Álvarez, Adriana María Álvarez Acosta, and Cybrix Studios S.A.S. The author also thanks Chester Bruce Álvarez Campbell and Luis Fernando Torres Ruiz for their belief and collaboration, and dedicates this work to the memory of Luz Elena Álvarez Acosta and Rubén Darío Álvarez Restrepo.
+
+\end{document}

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>ℤ[i] Gaussian Integer Visualizer</title>
+  <style>
+    body { margin: 0; overflow: hidden; background-color: black; }
+    canvas { display: block; }
+  </style>
+</head>
+<body>
+<script src="https://cdn.jsdelivr.net/npm/three@0.148.0/build/three.min.js"></script>
+<script>
+  const scene = new THREE.Scene();
+  scene.background = new THREE.Color(0x000000);
+  const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+  const renderer = new THREE.WebGLRenderer();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  document.body.appendChild(renderer.domElement);
+
+  const geometry = new THREE.SphereGeometry(0.05, 6, 6);
+  const material = new THREE.MeshBasicMaterial({color: 0x00ffff});
+
+  // Visualizar puntos z = a + bi en [-10, 10]^2
+  for (let a = -10; a <= 10; a++) {
+    for (let b = -10; b <= 10; b++) {
+      if (a === 0 && b === 0) continue;
+      const z = new THREE.Mesh(geometry, material);
+      z.position.set(a / 2, 0, b / 2);
+      scene.add(z);
+    }
+  }
+
+  camera.position.z = 6;
+  const animate = function () {
+    requestAnimationFrame(animate);
+    scene.rotation.y += 0.002;
+    renderer.render(scene, camera);
+  };
+  animate();
+</script>
+</body>
+</html>
